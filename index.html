@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Birthday Gift For You</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #080808;
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.95) 100%);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Ambient Animated Background */
+        .bg-glow {
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle at 30% 30%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 70%, rgba(255, 77, 109, 0.03) 0%, transparent 50%);
+            animation: bgMove 20s infinite linear;
+            z-index: 1;
+            pointer-events: none;
+        }
+        @keyframes bgMove {
+            0% { transform: translate(-10%, -10%) rotate(0deg); }
+            100% { transform: translate(-10%, -10%) rotate(360deg); }
+        }
+
+        /* Screen Wrapper */
+        .screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s cubic-bezier(0.25, 1, 0.5, 1), transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: scale(1.05);
+            z-index: 2;
+        }
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+
+        /* Cinematic Text Animations */
+        .fade-in-text {
+            opacity: 0;
+            transform: translateY(20px);
+            filter: blur(5px);
+            transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .screen.active .fade-in-text {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+        .delay-1 { transition-delay: 0.3s; }
+        .delay-2 { transition-delay: 0.6s; }
+        .delay-3 { transition-delay: 0.9s; }
+
+        /* Animated Gold Line */
+        .gold-line {
+            width: 180px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            margin: 15px 0;
+            transform: scaleX(0);
+            transition: transform 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+            transition-delay: 0.4s;
+        }
+        .screen.active .gold-line {
+            transform: scaleX(1);
+        }
+
+        /* Premium Buttons */
+        .btn-gold {
+            background: transparent;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            letter-spacing: 4px;
+            padding: 14px 38px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 25px;
+        }
+        .btn-gold::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.6s ease;
+        }
+        .btn-gold:hover::before {
+            left: 100%;
+        }
+        .btn-gold:hover {
+            background: #d4af37;
+            color: #080808;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+            border-color: #d4af37;
+        }
+
+        .cinematic-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.6rem;
+            letter-spacing: 7px;
+            color: #ffffff;
+            font-weight: 400;
+            text-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+        .cinematic-sub {
+            font-size: 0.85rem;
+            letter-spacing: 4px;
+            color: #888888;
+            text-transform: uppercase;
+        }
+
+        /* Slide 1: Initial Letter */
+        .intro-letter {
+            font-family: 'Cinzel', serif;
+            font-size: 4rem;
+            color: #d4af37;
+            line-height: 1;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+            letter-spacing: 2px;
+        }
+        .screen.active .intro-letter {
+            opacity: 0.85;
+            transform: scale(1);
+        }
+
+        /* Slide 2: Countdown Pulse */
+        .count-num {
+            font-family: 'Cinzel', serif;
+            font-size: 10rem;
+            color: #ffffff;
+            line-height: 1;
+        }
+        .pulse-animation {
+            animation: countPulse 1s infinite alternate;
+        }
+        @keyframes countPulse {
+            0% { transform: scale(0.9); opacity: 0.6; text-shadow: 0 0 20px rgba(255,255,255,0); }
+            100% { transform: scale(1.05); opacity: 1; text-shadow: 0 0 40px rgba(255,255,255,0.3); }
+        }
+
+        /* Slide 4: Photo Grid Collage */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 450px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .grid-item {
+            aspect-ratio: 1 / 1;
+            background: #121212;
+            border: 4px solid #ffffff;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px) rotate(var(--r));
+            transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            animation: smoothFloat var(--t) ease-in-out infinite alternate;
+            animation-delay: var(--d);
+        }
+        .screen.active .grid-item {
+            opacity: 1;
+            transform: translateY(0) rotate(var(--r));
+        }
+        .grid-item:hover {
+            transform: scale(1.08) rotate(0deg) !important;
+            z-index: 10;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.8);
+        }
+        .grid-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: grayscale(20%) contrast(105%);
+            transition: transform 0.8s ease;
+        }
+        .grid-item:hover img {
+            transform: scale(1.1);
+        }
+        @keyframes smoothFloat {
+            0% { transform: translateY(0) rotate(var(--r)); }
+            100% { transform: translateY(-8px) rotate(var(--r)); }
+        }
+
+        /* Slide 5: Smooth Letter Carousel */
+        .msg-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 550px;
+            width: 100%;
+        }
+        .msg-image-box {
+            width: 250px;
+            height: 330px;
+            border: 6px solid #ffffff;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.7);
+            margin-bottom: 35px;
+            overflow: hidden;
+            transform: rotate(-1deg);
+            animation: smoothFloat 4s ease-in-out infinite alternate;
+        }
+        .msg-image-box img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .msg-text-box {
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+        }
+        .msg-content {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: #e0e0e0;
+            font-weight: 300;
+            display: none;
+            text-align: center;
+        }
+        .msg-content.active-msg {
+            display: block;
+            animation: textRevealBlur 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes textRevealBlur {
+            from { opacity: 0; transform: translateY(15px); filter: blur(4px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        /* Slide 6: Final Pulse Heart & Fireworks */
+        .heart-icon {
+            color: #ff4d6d;
+            font-size: 32px;
+            margin-bottom: 25px;
+            animation: pulseHeart 0.8s infinite alternate cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        @keyframes pulseHeart {
+            0% { transform: scale(1); text-shadow: 0 0 10px rgba(255,77,109,0.3); }
+            100% { transform: scale(1.25); text-shadow: 0 0 25px rgba(255,77,109,0.7); }
+        }
+        .sparkle-canvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="lagu.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="bg-glow"></div>
+    <canvas id="fireworks" class="sparkle-canvas"></canvas>
+
+    <div class="screen active" id="scr-1">
+        <div class="intro-letter">Sayang</div>
+        <div class="gold-line"></div>
+        <div class="cinematic-sub fade-in-text delay-1" style="margin-bottom: 20px;">You are cordially invited</div>
+        <h2 class="cinematic-title fade-in-text delay-2" style="font-size: 1.8rem; letter-spacing: 5px; line-height: 1.5;">A Little Surprise<br>Made With Love</h2>
+        <button class="btn-gold fade-in-text delay-3" onclick="startAll()">Mulai Cerita</button>
+    </div>
+
+    <div class="screen" id="scr-2">
+        <div class="cinematic-sub fade-in-text" style="margin-bottom: 25px; font-size: 11px;">Preparing something for you...</div>
+        <div class="count-num pulse-animation" id="countdown-display">3</div>
+    </div>
+
+    <div class="screen" id="scr-3">
+        <div class="cinematic-sub fade-in-text" style="color: #d4af37; margin-bottom: 5px;">Celebrating</div>
+        <h1 class="cinematic-title fade-in-text delay-1" style="font-size: 3.6rem; font-weight: 500;">Ghina Darin</h1>
+        <div class="gold-line"></div>
+        <p class="cinematic-sub fade-in-text delay-2" style="font-size: 11px; margin-bottom: 25px; color: #aaaaaa;">Everything about you matters • This is for you</p>
+        <button class="btn-gold fade-in-text delay-3" onclick="changeScreen(3, 4)">Let it begin</button>
+    </div>
+
+    <div class="screen" id="scr-4">
+        <div class="cinematic-sub fade-in-text" style="margin-bottom: 30px; font-size: 12px; color: #d4af37;">All About You</div>
+        <div class="grid-container">
+            <div class="grid-item" style="--r: -3deg; --t: 4s; --d: 0s;"><img src="foto1.jpg" alt="Foto 1"></div>
+            <div class="grid-item" style="--r: 2deg; --t: 3.5s; --d: 0.3s;"><img src="foto2.jpg" alt="Foto 2"></div>
+            <div class="grid-item" style="--r: -1deg; --t: 4.2s; --d: 0.6s;"><img src="foto3.jpg" alt="Foto 3"></div>
+            <div class="grid-item" style="--r: 3deg; --t: 3.8s; --d: 0.9s;"><img src="foto4.jpg" alt="Foto 4"></div>
+        </div>
+        <button class="btn-gold fade-in-text delay-2" onclick="changeScreen(4, 5)">Continue</button>
+    </div>
+
+    <div class="screen" id="scr-5">
+        <div class="cinematic-sub fade-in-text" style="margin-bottom: 25px; font-size: 11px;">A Message Just For You</div>
+        <div class="msg-layout">
+            <div class="msg-image-box">
+                <img src="foto5.jpg" alt="Main Memory">
+            </div>
+            <div class="msg-text-box">
+                <p class="msg-content active-msg" id="m1">Tidak perlu alasan spesial atau perayaan besar untuk membuatku menulis ini. Hari ini aku hanya ingin bilang terima kasih karena kamu selalu ada untukku. Meskipun jarak memisahkan kita, kehadiranmu di hidupku tetap menjadi hal paling indah yang membuat segalanya terasa jauh lebih luar biasa.</p>
+                <p class="msg-content" id="m2">Sejak kita menjalani ini bersama, aku belajar banyak tentang arti rindu, kepercayaan, dan komitmen yang sesungguhnya. Kamu membuktikan bahwa cinta tidak melulu soal kedekatan fisik, melainkan tentang hati yang saling menggenggam. Jauh di sana, kamu tetap menjadi tempat terbaikku untuk pulang dan berbagi cerita.</p>
+                <p class="msg-content" id="m3">Pesan ini adalah pengingat kecil bahwa jarak tidak akan pernah mengubah rasa ini. Terima kasih sudah memilih untuk terus bertahan, berjuang, dan melangkah bersamaku sampai hari ini. Untukmu, cintaku, hari ini, esok, dan selamanya.</p>
+            </div>
+            <button class="btn-gold" id="msg-next-btn" onclick="nextMessage()">Continue</button>
+        </div>
+    </div>
+
+    <div class="screen" id="scr-6">
+        <div class="cinematic-sub fade-in-text" style="margin-bottom: 5px;">Thank you for being here</div>
+        <h1 class="cinematic-title fade-in-text delay-1" style="font-size: 3.2rem; color: #ffffff; margin-bottom: 10px;">Happy Birthday</h1>
+        <i class="fa-solid fa-heart heart-icon fade-in-text delay-2"></i>
+        <p class="cinematic-sub fade-in-text delay-2" style="font-size: 11px; color: #d4af37; margin-bottom: 35px;">You deserve all the good things in life</p>
+        <button class="btn-gold fade-in-text delay-3" onclick="restartExperience()">Replay the night</button>
+    </div>
+
+    <script>
+        function startAll() {
+            const music = document.getElementById('bg-music');
+            music.play().catch(e => console.log("Audio play deferred"));
+
+            changeScreen(1, 2);
+
+            let count = 3;
+            const countDisplay = document.getElementById('countdown-display');
+            
+            const timer = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countDisplay.style.transform = 'scale(0.5)';
+                    countDisplay.style.opacity = '0';
+                    setTimeout(() => {
+                        countDisplay.innerText = count;
+                        countDisplay.style.transform = 'scale(1)';
+                        countDisplay.style.opacity = '1';
+                    }, 150);
+                } else {
+                    clearInterval(timer);
+                    changeScreen(2, 3);
+                }
+            }, 1000);
+        }
+
+        function changeScreen(current, next) {
+            document.getElementById('scr-' + current).classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('scr-' + next).classList.add('active');
+                if(next === 6) { startFireworks(); }
+            }, 400);
+        }
+
+        let currentMsgIndex = 1;
+        const totalMessages = 3;
+
+        function nextMessage() {
+            document.getElementById('m' + currentMsgIndex).classList.remove('active-msg');
+            currentMsgIndex++;
+            
+            if (currentMsgIndex <= totalMessages) {
+                document.getElementById('m' + currentMsgIndex).classList.add('active-msg');
+            } else {
+                changeScreen(5, 6);
+            }
+        }
+
+        function restartExperience() {
+            document.getElementById('scr-6').classList.remove('active');
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        }
+
+        /* Fireworks Canvas Logic */
+        const canvas = document.getElementById('fireworks');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y; this.color = color;
+                this.radius = Math.random() * 2.5 + 1;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 7,
+                    y: (Math.random() - 0.5) * 7
+                };
+                this.alpha = 1;
+                this.decay = Math.random() * 0.012 + 0.004;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+            update() {
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.velocity.y += 0.035; 
+                this.alpha -= this.decay;
+            }
+        }
+
+        function createExplosion() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * (canvas.height * 0.5);
+            const colors = ['#d4af37', '#ffffff', '#ff4d6d', '#ffb3c1', '#ffe5ec'];
+            const chosenColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            for (let i = 0; i < 50; i++) {
+                particles.push(new Particle(x, y, chosenColor));
+            }
+        }
+
+        let animationId;
+        function animateParticles() {
+            animationId = requestAnimationFrame(animateParticles);
+            ctx.fillStyle = 'rgba(8, 8, 8, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((p, idx) => {
+                if (p.alpha <= 0) {
+                    particles.splice(idx, 1);
+                } else {
+                    p.update();
+                    p.draw();
+                }
+            });
+
+            if (Math.random() < 0.06) { createExplosion(); }
+        }
+
+        function startFireworks() {
+            cancelAnimationFrame(animationId);
+            particles = [];
+            animateParticles();
+        }
+    </script>
+</body>
+</html>
